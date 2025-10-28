@@ -9,7 +9,7 @@ import type { UserActiveInterface } from 'src/common/interfaces/user-active.inte
 
 
 
-@Auth(Role.USER)
+@Auth(Role.DOCTOR)
 @Controller('cats')
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}

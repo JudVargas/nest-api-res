@@ -5,7 +5,7 @@ import { UpdateBreedDto } from './dto/update-breed.dto';
 import { Role } from 'src/common/enums/rol.enum';
 import { Auth } from 'src/auth/decorators/auth.decorators';
 
-@Auth(Role.USER)
+@Auth(Role.DOCTOR)
 @Controller('breeds')
 export class BreedsController {
   constructor(private readonly breedsService: BreedsService) {}
