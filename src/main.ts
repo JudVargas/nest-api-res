@@ -13,6 +13,12 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  // 👇 Habilita CORS para el frontend local
+  app.enableCors({
+    origin: '*', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
+  });
+
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
