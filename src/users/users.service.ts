@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import * as bcryptjs from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -13,7 +14,17 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
+    // buscar el usuario existente
+    const existingUser = await this.findOneByEmail(createUserDto.email);
+    if (existingUser) {
+      throw new Error('User already exists');
+    }
+    // Hash para la contraseña
+    if (createUserDto.password){
+      createUserDto.password = await bcryptjs.hash(createUserDto.password, 10);
+    }
+
     return this.userRepository.save(createUserDto);
   }
 
@@ -33,14 +44,24 @@ export class UsersService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} user`;
+    return this.userRepository.findOneBy({ id });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+
+    // buscar el usuario existente
+    const existingUser = await this.userRepository.findOneBy({ id });
+    if (!existingUser) {
+      throw new Error('User not found');
+    }
+    // Hash para la contraseña
+    if (updateUserDto.password){
+      updateUserDto.password = await bcryptjs.hash(updateUserDto.password, 10);
+    }
+    return this.userRepository.update(id, updateUserDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} user`;
+    return this.userRepository.delete(id);
   }
 }
